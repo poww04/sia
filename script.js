@@ -1,5 +1,5 @@
 async function getWeather() {
-    document.getElementById('inputSection').style.display = 'block'; // Always show input when going back
+    document.getElementById('inputSection').style.display = 'block';
     const city = document.getElementById('cityInput').value.trim();
     if (!city) {
         document.getElementById('weatherResult').innerHTML = "<p>Please enter a city name.</p>";
@@ -27,6 +27,8 @@ async function getWeather() {
                 const dayFormatted = dayDate.toLocaleDateString();
                 const weather = forecast.day.condition.text;
                 const temperature = forecast.day.avgtemp_c;
+                const humidity = forecast.day.avghumidity;
+                const wind = forecast.day.maxwind_kph;
                 const weatherIcon = getWeatherIcon(weather);
 
                 weekWeatherHTML += `
@@ -35,13 +37,20 @@ async function getWeather() {
                         <p>${dayFormatted}</p>
                         <img src="${weatherIcon}" alt="${weather}" style="width: 50px; height: 50px;" />
                         <p><strong>${weather}</strong></p>
-                        <p><strong>${temperature}°C</strong></p>
+                        <p><strong>${temperature}°C</strong></p><br>
+                        <p>💧 Humidity: ${humidity}%</p><br>
+                        <p>🌬️ Wind: ${wind} km/h</p>
                     </div>
                 `;
             });
 
             document.getElementById('weatherResult').innerHTML = `
-                <h2>Weather Forecast for ${city}</h2>
+                <div class="weather-header">
+                    <button onclick="goBackToDefaultLocation()" class="back-button">
+                        <img src="images/back.png" alt="Back to Default" style="width: 30px; height: 30px;"/>
+                    </button>
+                    <h2>Weather Forecast for ${city}</h2>
+                </div>
                 <div id="weekWeather">${weekWeatherHTML}</div>
             `;
         }
@@ -51,8 +60,9 @@ async function getWeather() {
     }
 }
 
+
 function showHourlyWeather(dayIndex) {
-    document.getElementById('inputSection').style.display = 'none'; // Hide input when showing hourly
+    document.getElementById('inputSection').style.display = 'none';
     const city = document.getElementById('cityInput').value.trim();
     const apiKey = 'ba1e042639b74709b5c55915252304';
     const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7&aqi=no`;
@@ -65,20 +75,23 @@ function showHourlyWeather(dayIndex) {
             const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
             let hourlyWeatherHTML = `
-        <div style="display: flex; flex-direction: column;">
-            <button onclick="goBackToWeeklyWeather()" class="back-button">
-            <img src="images/back.png" alt="Back" style="width: 30px; height: 30px;"/>
-            </button>
-             <h3>Hourly Weather for ${formattedDate}</h3>
-        </div>
-    <div id="hourlyWeather">
-`;
-
+                <div class="hourly-header">
+                    <div class="hourly-header-content">
+                        <button onclick="goBackToWeeklyWeather()" class="back-button">
+                            <img src="images/back.png" alt="Back"/>
+                        </button>
+                        <h3>Hourly Weather for ${formattedDate}</h3>
+                    </div>
+                </div>
+                <div id="hourlyWeather">
+            `;
 
             day.hour.forEach(hourData => {
                 const hour = new Date(hourData.time).getHours();
                 const temperature = hourData.temp_c;
                 const condition = hourData.condition.text;
+                const humidity = hourData.humidity;
+                const wind = hourData.wind_kph;
                 const weatherIcon = getWeatherIcon(condition);
 
                 hourlyWeatherHTML += `
@@ -87,6 +100,8 @@ function showHourlyWeather(dayIndex) {
                         <img src="${weatherIcon}" alt="${condition}" />
                         <p>${condition}</p>
                         <p>${temperature}°C</p>
+                        <p>💧 Humidity: ${humidity}%</p>
+                        <p>🌬️ Wind: ${wind} km/h</p>
                     </div>
                 `;
             });
@@ -134,51 +149,57 @@ function getWeatherIcon(condition) {
 }
 async function getDefaultLocationWeather() {
     if (!navigator.geolocation) {
-      document.getElementById('weatherResult').innerHTML = "<p>Geolocation is not supported by your browser.</p>";
-      return;
+        document.getElementById('weatherResult').innerHTML = "<p>Geolocation is not supported by your browser.</p>";
+        return;
     }
-  
+
     navigator.geolocation.getCurrentPosition(async position => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      const apiKey = 'ba1e042639b74709b5c55915252304';
-      const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
-  
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-  
-        const city = data.location.name;
-        const date = "Today";
-        const weather = data.current.condition.text;
-        const temperature = data.current.temp_c;
-        const humidity = data.current.humidity;
-        const wind = data.current.wind_kph;
-        const weatherIcon = getWeatherIcon(weather);
-  
-        document.getElementById('weatherResult').innerHTML = `
-          <div class="default-center">
-              <div class="weather-card">
-                  <h2>${date}</h2>
-                  <h3>${city}</h3>
-                  <img src="${weatherIcon}" alt="${weather}" style="width: 60px; height: 60px;" />
-                  <p><strong>${weather}</strong></p>
-                  <p style="font-size: 28px;"><strong>${temperature}°C</strong></p>
-                  <p>💧 Humidity: ${humidity}%</p>
-                  <p>🌬️ Wind: ${wind} km/h</p>
-              </div>
-          </div>
-        `;
-      } catch (error) {
-        console.error(error);
-        document.getElementById('weatherResult').innerHTML = "<p>Unable to fetch weather data for your location.</p>";
-      }
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const apiKey = 'ba1e042639b74709b5c55915252304';
+        const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const city = data.location.name;
+            const date = new Date();
+            const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const weather = data.current.condition.text;
+            const temperature = data.current.temp_c;
+            const humidity = data.current.humidity;
+            const wind = data.current.wind_kph;
+            const weatherIcon = getWeatherIcon(weather);
+
+            document.getElementById('weatherResult').innerHTML = `
+                <div class="default-center">
+                    <div class="weather-card">
+                        <h2>Today</h2>
+                        <p><strong>${formattedDate}</strong></p>
+                        <h3>${city}</h3>
+                        <img src="${weatherIcon}" alt="${weather}" style="width: 60px; height: 60px;" />
+                        <p><strong>${weather}</strong></p>
+                        <p style="font-size: 28px;"><strong>${temperature}°C</strong></p>
+                        <p>💧 Humidity: ${humidity}%</p>
+                        <p>🌬️ Wind: ${wind} km/h</p>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error(error);
+            document.getElementById('weatherResult').innerHTML = "<p>Unable to fetch weather data for your location.</p>";
+        }
     }, error => {
-      console.error(error);
-      document.getElementById('weatherResult').innerHTML = "<p>Error fetching geolocation.</p>";
+        console.error(error);
+        document.getElementById('weatherResult').innerHTML = "<p>Error fetching geolocation.</p>";
     });
-  }
-  
+}
+
   document.addEventListener('DOMContentLoaded', getDefaultLocationWeather);
 
-  
+  function goBackToDefaultLocation() {
+    document.getElementById('inputSection').style.display = 'block';
+    document.getElementById('cityInput').value = ''; // Clear the city input
+    getDefaultLocationWeather();
+}
