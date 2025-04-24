@@ -5,7 +5,6 @@
   <title>Welcome</title>
   <link rel="stylesheet" href="styles2.css">
   <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Marcellus&family=Montserrat:wght@500;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
 
@@ -17,10 +16,26 @@
 
     <div class="tagline">Weather That Matches Your Mood!</div>
 
+    <div class="slideshow">
+      <button class="nav-btn" onclick="changeImage(-1)">
+        <img src="images/back.png" alt="Back" class="nav-icon">
+      </button>
+    
+      <div class="image-wrapper">
+      </div>
+    
+      <button class="nav-btn" onclick="changeImage(1)">
+        <img src="images/next.png" alt="Next" class="nav-icon">
+      </button>
+    </div>
+    
+    
+
     <a href="index2.html">
       <button class="get-started-btn">Get Started</button>
     </a>
   </div>
 
+  <script src="iscript.js"></script>
 </body>
 </html>
