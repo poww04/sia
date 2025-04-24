@@ -67,7 +67,7 @@ function showHourlyWeather(dayIndex) {
             let hourlyWeatherHTML = `
         <div style="display: flex; flex-direction: column;">
             <button onclick="goBackToWeeklyWeather()" class="back-button">
-            <img src="back.png" alt="Back" style="width: 30px; height: 30px;"/>
+            <img src="images/back.png" alt="Back" style="width: 30px; height: 30px;"/>
             </button>
              <h3>Hourly Weather for ${formattedDate}</h3>
         </div>
