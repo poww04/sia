@@ -107,26 +107,27 @@ function goBackToWeeklyWeather() {
 
 function getWeatherIcon(condition) {
     const normalizedCondition = condition.toLowerCase();
+    const path = 'images/';
 
     if (normalizedCondition.includes('clear') || normalizedCondition.includes('sunny')) {
-        return 'sun.gif';
+        return  path + 'sun.gif';
     }
     if (normalizedCondition.includes('cloudy')) {
-        return 'cloudy.gif';
+        return  path + 'cloudy.gif';
     }
 
     switch (normalizedCondition) {
-        case 'rainy': return 'rainy-animated.gif';
-        case 'moderate rain': case 'moderate rain at times': return 'moderateR.gif';
-        case 'snowy': return 'snow.gif';
-        case 'patchy rain nearby': return 'rainnear.gif';
-        case 'patchy snow nearby': return 'snowsnear.gif';
-        case 'light rain shower': return 'rainli.gif';
-        case 'heavy rain': return 'heavyrain.gif';
-        case 'showers': return 'showers.gif';
-        case 'thunderstorms': return 'thunderstorms.gif';
-        case 'patchy light rain': return 'drop.gif';
-        case 'patchy light drizzle': return 'weather.gif';
+        case 'rainy': return  path + 'rainy-animated.gif';
+        case 'moderate rain': case 'moderate rain at times': return  path + 'moderateR.gif';
+        case 'snowy': return  path + 'snow.gif';
+        case 'patchy rain nearby': return  path + 'rainnear.gif';
+        case 'patchy snow nearby': return  path + 'snowsnear.gif';
+        case 'light rain shower': return  path + 'rainli.gif';
+        case 'heavy rain': return  path + 'heavyrain.gif';
+        case 'showers': return  path + 'showers.gif';
+        case 'thunderstorms': return  path + 'thunderstorms.gif';
+        case 'patchy light rain': return  path + 'drop.gif';
+        case 'patchy light drizzle': return  path + 'weather.gif';
         default: return '';
     }
 
