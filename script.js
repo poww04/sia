@@ -133,54 +133,51 @@ function getWeatherIcon(condition) {
 }
 async function getDefaultLocationWeather() {
     if (!navigator.geolocation) {
-        document.getElementById('weatherResult').innerHTML = "<p>Geolocation is not supported by your browser.</p>";
-        return;
+      document.getElementById('weatherResult').innerHTML = "<p>Geolocation is not supported by your browser.</p>";
+      return;
     }
-
+  
     navigator.geolocation.getCurrentPosition(async position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        const apiKey = 'ba1e042639b74709b5c55915252304';
-        const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            const city = data.location.name;
-            const date = "Today";
-            const weather = data.current.condition.text;
-            const temperature = data.current.temp_c;
-            const humidity = data.current.humidity;
-            const wind = data.current.wind_kph;
-            const weatherIcon = getWeatherIcon(weather);
-
-            document.getElementById('weatherResult').innerHTML = `
-    <div class="default-center">
-        <div class="weather-card">
-            <h2>${date}</h2>
-            <h3>${city}</h3>
-            <img src="${weatherIcon}" alt="${weather}" style="width: 60px; height: 60px;" />
-            <p><strong>${weather}</strong></p>
-            <p style="font-size: 28px;"><strong>${temperature}°C</strong></p>
-            <p>💧 Humidity: ${humidity}%</p>
-            <p>🌬 Wind: ${wind} km/h</p>
-        </div>
-    </div>
-`;
-
-        } catch (error) {
-            console.error(error);
-            document.getElementById('weatherResult').innerHTML = "<p>Error fetching location weather.</p>";
-        }
-    }, error => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const apiKey = 'ba1e042639b74709b5c55915252304';
+      const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
+  
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+  
+        const city = data.location.name;
+        const date = "Today";
+        const weather = data.current.condition.text;
+        const temperature = data.current.temp_c;
+        const humidity = data.current.humidity;
+        const wind = data.current.wind_kph;
+        const weatherIcon = getWeatherIcon(weather);
+  
+        document.getElementById('weatherResult').innerHTML = `
+          <div class="default-center">
+              <div class="weather-card">
+                  <h2>${date}</h2>
+                  <h3>${city}</h3>
+                  <img src="${weatherIcon}" alt="${weather}" style="width: 60px; height: 60px;" />
+                  <p><strong>${weather}</strong></p>
+                  <p style="font-size: 28px;"><strong>${temperature}°C</strong></p>
+                  <p>💧 Humidity: ${humidity}%</p>
+                  <p>🌬️ Wind: ${wind} km/h</p>
+              </div>
+          </div>
+        `;
+      } catch (error) {
         console.error(error);
-        document.getElementById('weatherResult').innerHTML = "<p>Unable to retrieve your location.</p>";
+        document.getElementById('weatherResult').innerHTML = "<p>Unable to fetch weather data for your location.</p>";
+      }
+    }, error => {
+      console.error(error);
+      document.getElementById('weatherResult').innerHTML = "<p>Error fetching geolocation.</p>";
     });
-}
-
-window.onload = () => {
-    getDefaultLocationWeather();
-};
+  }
+  
+  document.addEventListener('DOMContentLoaded', getDefaultLocationWeather);
 
   
